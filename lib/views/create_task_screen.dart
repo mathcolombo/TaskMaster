@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Para formatar datas e horas
 import 'package:task_master/models/category.dart';
 import 'package:task_master/models/task.dart';
-import 'package:task_master/models/enums/task_type.dart'; // Para poder associar uma TaskType
+// REMOVER: import 'package:task_master/models/enums/task_type.dart'; // Remova esta linha se ainda não o fez
 import 'package:task_master/views/widgets/category_chip.dart';
 
 class CreateTaskScreen extends StatefulWidget {
@@ -13,27 +13,29 @@ class CreateTaskScreen extends StatefulWidget {
 }
 
 class _CreateTaskScreenState extends State<CreateTaskScreen> {
-  final _formKey = GlobalKey<FormState>(); // Chave para o formulário
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  // Estados para Data e Hora
   DateTime? _startDate;
   TimeOfDay? _startTime;
   DateTime? _endDate;
   TimeOfDay? _endTime;
 
-  // Estado para Categoria selecionada
   Category? _selectedCategory;
-  List<Category> _availableCategories = [
-    Category(name: 'Exercícios', icon: Icons.directions_bike, color: Colors.pink[100]),
-    Category(name: 'Namorada', icon: Icons.favorite, color: Colors.pink[100]),
-    Category(name: 'Estudo', icon: Icons.menu_book, color: Colors.pink[100]),
-  ];
+  List<Category> _availableCategories = Category.defaultCategories;
 
-  // Estado para Prioridade
   int _priority = 0; // 0 para neutro, 1 para alta, -1 para baixa (ou usar um enum)
+
+  @override
+  void initState() {
+    super.initState();
+    // Definir a categoria padrão ou a primeira da lista
+    if (_availableCategories.isNotEmpty) {
+      _selectedCategory = _availableCategories.first;
+    }
+  }
 
   @override
   void dispose() {
@@ -43,7 +45,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     super.dispose();
   }
 
-  // Métodos para selecionar Data e Hora
   Future<void> _selectDate(BuildContext context, bool isStart) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -89,19 +90,15 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       time.hour,
       time.minute,
     );
-    return DateFormat('d MMM, HH:mm').format(combinedDateTime); // Ex: 1 mai, 15:00
+    return DateFormat('d MMM, HH:mm').format(combinedDateTime);
   }
 
   void _createTask() {
     if (_formKey.currentState!.validate()) {
-      // Aqui você coletaria todos os dados e criaria o objeto Task
-      // E então passaria de volta para a tela anterior (ou salvaria no banco/API)
-
       final String title = _titleController.text;
       final String location = _locationController.text;
       final String description = _descriptionController.text;
 
-      // Combinar data e hora de início
       DateTime? fullStartTime;
       if (_startDate != null && _startTime != null) {
         fullStartTime = DateTime(
@@ -113,7 +110,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         );
       }
 
-      // Combinar data e hora de fim
       DateTime? fullEndTime;
       if (_endDate != null && _endTime != null) {
         fullEndTime = DateTime(
@@ -125,43 +121,40 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         );
       }
 
-      // Para fins de exemplo, vamos assumir que a categoria "Exercícios" mapeia para TaskType.gym
-      // e outras para TaskType.other. Você pode ter um mapeamento mais sofisticado.
-      TaskType taskType = TaskType.other;
-      if (_selectedCategory?.name == 'Exercícios') {
-        taskType = TaskType.gym;
-      } else if (_selectedCategory?.name == 'Estudo') {
-        taskType = TaskType.work; // Usando work para estudo
+      if (_selectedCategory == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Por favor, selecione uma categoria')),
+        );
+        return;
       }
-      // Adicionar mais mapeamentos conforme suas categorias
 
       final newTask = Task(
         title: title,
         description: description,
         location: location,
+        // Mantendo o formato de string para 'time' como no seu modelo Task
         time: '${_formatDateTime(_startDate, _startTime)} - ${_formatDateTime(_endDate, _endTime)}',
-        type: taskType,
+        type: _selectedCategory!,
         // priority: _priority, // Se adicionar prioridade ao modelo Task
       );
 
       debugPrint('Nova tarefa criada: ${newTask.toJson()}');
 
-      // Fechar a tela
-      Navigator.pop(context, newTask); // Passa a nova tarefa de volta para a tela anterior
+      Navigator.pop(context, newTask); // AQUI! Passa a nova tarefa de volta
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2E2E3E), // Fundo escuro como na imagem
+      backgroundColor: const Color(0xFF2E2E3E),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white, size: 30),
           onPressed: () {
-            Navigator.pop(context); // Fecha a tela sem criar a tarefa
+            Navigator.pop(context);
           },
         ),
         title: const Text(
@@ -177,7 +170,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Nome da tarefa
               const Text(
                 'Nome da tarefa',
                 style: TextStyle(color: Colors.white70, fontSize: 16),
@@ -205,36 +197,34 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Categoria
               const Text(
                 'Categoria',
                 style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
               const SizedBox(height: 8),
               Wrap(
-                spacing: 10.0, // Espaçamento horizontal entre os chips
-                runSpacing: 10.0, // Espaçamento vertical entre as linhas de chips
+                spacing: 10.0,
+                runSpacing: 10.0,
                 children: [
                   ..._availableCategories.map((category) => CategoryChip(
                         category: category,
-                        isSelected: _selectedCategory?.name == category.name,
+                        isSelected: _selectedCategory?.id == category.id,
                         onTap: () {
                           setState(() {
                             _selectedCategory = category;
                           });
                         },
                       )).toList(),
-                  // Botão para adicionar nova categoria
                   GestureDetector(
                     onTap: () {
-                      // Lógica para adicionar nova categoria (ex: abrir um modal)
                       debugPrint('Adicionar nova categoria');
+                      // Lógica para adicionar nova categoria (ex: abrir um modal)
                     },
                     child: Container(
                       width: 50,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.blueAccent.withOpacity(0.2), // Cor do botão '+'
+                        color: Colors.blueAccent.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Icon(Icons.add, color: Colors.white, size: 24),
@@ -244,7 +234,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Começo e Fim
               Row(
                 children: [
                   Expanded(
@@ -271,7 +260,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               children: [
                                 Text(
                                   _formatDateTime(_startDate, _startTime).isEmpty
-                                      ? '1 maio, 15:00h' // Placeholder
+                                      ? '1 maio, 15:00h' // Exemplo
                                       : _formatDateTime(_startDate, _startTime),
                                   style: TextStyle(color: Colors.white.withOpacity(0.5)),
                                 ),
@@ -307,7 +296,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               children: [
                                 Text(
                                   _formatDateTime(_endDate, _endTime).isEmpty
-                                      ? '1 maio, 16:30h' // Placeholder
+                                      ? '1 maio, 16:30h' // Exemplo
                                       : _formatDateTime(_endDate, _endTime),
                                   style: TextStyle(color: Colors.white.withOpacity(0.5)),
                                 ),
@@ -322,7 +311,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Prioridade
               const Text(
                 'Prioridade',
                 style: TextStyle(color: Colors.white70, fontSize: 16),
@@ -366,7 +354,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Localização
               const Text(
                 'Localização',
                 style: TextStyle(color: Colors.white70, fontSize: 16),
@@ -388,7 +375,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Descrição
               const Text(
                 'Descrição',
                 style: TextStyle(color: Colors.white70, fontSize: 16),
@@ -397,7 +383,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               TextFormField(
                 controller: _descriptionController,
                 style: const TextStyle(color: Colors.white),
-                maxLines: 3, // Permite múltiplas linhas
+                maxLines: 3,
                 decoration: InputDecoration(
                   hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                   filled: true,
@@ -410,7 +396,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               ),
               const SizedBox(height: 30),
 
-              // Botão Criar tarefa
               Center(
                 child: SizedBox(
                   width: double.infinity,
@@ -418,7 +403,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   child: ElevatedButton(
                     onPressed: _createTask,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent[400], // Cor do botão
+                      backgroundColor: Colors.blueAccent[400],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),

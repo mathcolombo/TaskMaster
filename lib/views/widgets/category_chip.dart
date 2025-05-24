@@ -20,18 +20,18 @@ class CategoryChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
+          // CORRIGIDO: Usar category.color diretamente, sem o '??'
           color: isSelected
-              ? category.color ?? Colors.pink[300] // Cor de destaque se selecionado
-              : Colors.white.withOpacity(0.1), // Cor padrão
+              ? category.color // A cor da categoria para o fundo do chip selecionado
+              : Colors.white.withOpacity(0.1), // Cor padrão se não selecionado
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (category.icon != null) ...[
-              Icon(category.icon, color: Colors.white, size: 18),
-              const SizedBox(width: 8),
-            ],
+            // CORRIGIDO: Usar category.icon diretamente, sem o 'if (category.icon != null)'
+            Icon(category.icon, color: Colors.white, size: 18), // A cor do ícone é sempre branca aqui
+            const SizedBox(width: 8),
             Text(
               category.name,
               style: const TextStyle(

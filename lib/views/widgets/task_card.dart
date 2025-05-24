@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:task_master/models/enums/task_type.dart';
-import 'package:task_master/models/task.dart'; // <<< CORRIGIDO AQUI
+import 'package:task_master/models/task.dart';
+import 'package:task_master/models/category.dart';
+import 'package:task_master/models/enums/task_status.dart'; // NOVO IMPORT
 
 class TaskCard extends StatelessWidget {
   final Task task;
@@ -10,14 +11,30 @@ class TaskCard extends StatelessWidget {
     required this.task,
   });
 
+  Color _getCardColor(TaskStatus status) {
+    switch (status) {
+      case TaskStatus.completed:
+        return const Color(0xFF5EAC24); // Verde para cumpridas
+      case TaskStatus.missed:
+        return const Color(0xFF931621); // Vermelho para não cumpridas
+      case TaskStatus.pending:
+      default:
+        return const Color(0xFFB2B09B); // Cinza claro para pendentes (não aconteceram)
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Category taskCategory = task.type;
+    final Color cardColor = _getCardColor(task.status); // Usa a função para definir a cor
+
     return Card(
-      color: task.type.cardColor,
+      color: cardColor, // Usa a cor baseada no status
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
       elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 8.0), // Adicione um margin para espaçamento entre os cards
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -29,7 +46,7 @@ class TaskCard extends StatelessWidget {
                 children: [
                   Text(
                     task.title,
-                    style: const TextStyle( // Make consistent with const if no dynamic parts
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -81,10 +98,12 @@ class TaskCard extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: task.type.iconContainerColor,
+                // Ícone com a cor da categoria (suave)
+                color: taskCategory.color.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
-              child: Icon(task.type.icon, color: Colors.white, size: 30),
+              // Ícone com a cor da categoria
+              child: Icon(taskCategory.icon, color: taskCategory.color, size: 30),
             ),
           ],
         ),
