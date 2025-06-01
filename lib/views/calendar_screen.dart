@@ -7,7 +7,6 @@ import 'package:task_master/views/widgets/calendar_summary_card.dart';
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
 
-  // NOVO: Método estático para acessar o State da CalendarScreen
   static _CalendarScreenState? of(BuildContext context) {
     return context.findAncestorStateOfType<_CalendarScreenState>();
   }
@@ -17,11 +16,11 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
+  
   String _currentMonth = 'Maio';
   List<CalendarDaySummary> _calendarDays = [];
-  int _selectedIndex = 1; // MUDANÇA: Agora é uma variável de estado, pode ser atualizada
+  int _selectedIndex = 1;
 
-  // NOVO: Método para atualizar o índice selecionado
   void updateSelectedIndex(int index) {
     setState(() {
       _selectedIndex = index;
@@ -70,30 +69,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Estas variáveis de debug podem ser removidas no código final
-    // final mediaQuery = MediaQuery.of(context);
-    // final screenHeight = mediaQuery.size.height;
-    // final appBarHeight = AppBar().preferredSize.height;
-    // final bottomBarHeight = kBottomNavigationBarHeight + 20.0;
-    // debugPrint('Screen Height: $screenHeight');
-    // debugPrint('AppBar Height: $appBarHeight');
-    // debugPrint('Bottom Bar Height: $bottomBarHeight');
-
-
     return Scaffold(
-      backgroundColor: const Color(0xFF2E2E3E),
+      backgroundColor: Colors.white,
       extendBody: true,
       appBar: AppBar(
         title: const Text(
           'Calendário',
-          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black87, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
+            icon: const Icon(Icons.more_vert, color: Colors.black54),
             onPressed: () {
               // More options
             },
@@ -109,7 +98,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               child: Text(
                 _currentMonth,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
@@ -125,7 +114,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             day,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.black54,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -190,15 +179,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            // Adicione um padding inferior para evitar que o conteúdo fique atrás da barra de navegação
-            SizedBox(height: kBottomNavigationBarHeight + 20.0), // Ajuste conforme o padding da sua bottom bar
+            SizedBox(height: kBottomNavigationBarHeight + 20.0),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(bottom: 20.0),
         child: BottomNavigationBarCustom(
-          onItemTap: BottomNavigationBarCustom.navigate, // Passa a função estática de navegação
+          onItemTap: BottomNavigationBarCustom.navigate,
           selectedIndex: _selectedIndex,
         ),
       ),

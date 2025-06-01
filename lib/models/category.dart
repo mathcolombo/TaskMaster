@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Category {
-  final String id; // Adicione um ID único para cada categoria
+  
+  final String id;
   final String name;
   final IconData icon;
   final Color color;
@@ -13,12 +14,11 @@ class Category {
     required this.color,
   });
 
-  // Método para obter uma categoria pelo ID (útil para os dados mock)
   static Category? getCategoryById(String id) {
     try {
       return defaultCategories.firstWhere((category) => category.id == id);
     } catch (e) {
-      return null; // Retorna null se a categoria não for encontrada
+      return null;
     }
   }
 
@@ -62,23 +62,21 @@ class Category {
     ),
   ];
 
-  // NOVO MÉTODO: toJson para serializar a categoria
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
-      'icon_code_point': icon.codePoint, // Salva o codePoint do ícone
-      'color_value': color.value, // Salva o valor inteiro da cor
+      'icon_code_point': icon.codePoint,
+      'color_value': color.value,
     };
   }
 
-  // NOVO MÉTODO: fromJson para desserializar a categoria
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
       id: json['id'],
       name: json['name'],
-      icon: IconData(json['icon_code_point'], fontFamily: 'MaterialIcons'), // Reconstrói o ícone
-      color: Color(json['color_value']), // Reconstrói a cor
+      icon: IconData(json['icon_code_point'], fontFamily: 'MaterialIcons'),
+      color: Color(json['color_value']),
     );
   }
 }

@@ -11,20 +11,16 @@ class FocusModeScreen extends StatefulWidget {
 }
 
 class _FocusModeScreenState extends State<FocusModeScreen> {
+
   bool _isFocusModeActive = false;
   final int _selectedIndex = 4;
 
   bool _isPressing = false;
   DateTime? _pressStartTime;
 
-  // Removendo o ImageStreamListener, pois ele é mais para depuração inicial.
-  // Se a imagem está carregando (sem crash), não precisamos dele para o problema atual.
-
   @override
   void initState() {
     super.initState();
-    // Você pode pré-carregar a imagem aqui se quiser, mas se já não está travando,
-    // não é estritamente necessário para o problema de visibilidade.
   }
 
   void _activateFocusMode() {
@@ -89,11 +85,11 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _isFocusModeActive ? Colors.black : const Color(0xFF2E2E3E),
+      backgroundColor: _isFocusModeActive ? Colors.black : Colors.white,
       appBar: AppBar(
         title: const Text(
           'Foco mode',
-          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: _isFocusModeActive ? Colors.black : Colors.transparent,
@@ -101,7 +97,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
         leading: _isFocusModeActive
             ? null
             : IconButton(
-                icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                icon: const Icon(Icons.close, color: Colors.black, size: 30),
                 onPressed: () {
                   BottomNavigationBarCustom.navigate(0, context);
                 },
@@ -112,22 +108,21 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
         onLongPressEnd: _onLongPressEnd,
         child: Stack(
           children: [
-            // **Modo Foco Ativo: Fundo preto + Imagem sutil**
             if (_isFocusModeActive)
               Positioned.fill(
-                child: Container(color: Colors.black), // Garante o fundo preto sólido
+                child: Container(color: Colors.black),
               ),
             if (_isFocusModeActive)
               Center(
                 child: Opacity(
-                  opacity: 0.15, // Aumentado para 0.15 (de 0.05) para maior visibilidade
+                  opacity: 0.15,
                   child: Image.asset(
                     _focusImagePath,
-                    width: 250, // Aumenta um pouco o tamanho
+                    width: 250,
                     height: 250,
-                    fit: BoxFit.contain, // Garante que a imagem se ajuste ao seu espaço
-                    color: Colors.white, // Se sua imagem já for preta/branca, pode remover este 'color'
-                    colorBlendMode: BlendMode.modulate, // Mantém para misturar cores
+                    fit: BoxFit.contain,
+                    color: Colors.white,
+                    colorBlendMode: BlendMode.modulate,
                     errorBuilder: (context, error, stackTrace) {
                       debugPrint('Erro ao carregar imagem no modo foco: $error');
                       return const Icon(Icons.error, color: Colors.red, size: 250);
@@ -135,8 +130,6 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                   ),
                 ),
               ),
-
-            // **Modo Foco Desativado: Conteúdo normal da tela**
             if (!_isFocusModeActive)
               Column(
                 children: [
@@ -162,13 +155,13 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                 const Text(
                                   'Pressione o botão abaixo para entrar no modo foco.',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                                  style: TextStyle(color: Colors.black, fontSize: 16),
                                 ),
                                 const SizedBox(height: 10),
                                 const Text(
                                   'No modo foco, o celular ficará em uma tela preta e sairá apenas ao pressionar e segurar a imagem de fundo por 2 segundos.',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                                  style: TextStyle(color: Colors.black, fontSize: 16),
                                 ),
                                 const SizedBox(height: 30),
                               ],
@@ -186,7 +179,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                       child: ElevatedButton(
                         onPressed: _activateFocusMode,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2E7D7D),
+                          backgroundColor: const Color(0xff19647E),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),

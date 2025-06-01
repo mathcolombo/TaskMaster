@@ -1,7 +1,8 @@
 class NotificationItem {
+  
   final String title;
   final String message;
-  bool isRead; // Para controlar o estado de lida/não lida
+  bool isRead;
 
   NotificationItem({
     required this.title,
@@ -9,7 +10,6 @@ class NotificationItem {
     this.isRead = false,
   });
 
-  // Método opcional para converter para/de JSON
   factory NotificationItem.fromJson(Map<String, dynamic> json) {
     return NotificationItem(
       title: json['title'] as String,

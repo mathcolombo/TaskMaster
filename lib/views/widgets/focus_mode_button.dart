@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FocusModeButton extends StatelessWidget {
+  
   final VoidCallback onPressed;
   final bool isActive;
 
@@ -15,11 +16,11 @@ class FocusModeButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF2E7D7D), // Cor de fundo
+        backgroundColor: const Color(0xFF2E7D7D),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        minimumSize: const Size(double.infinity, 60), // Largura total
+        minimumSize: const Size(double.infinity, 60),
       ),
       child: Text(
         isActive ? 'Foco Mode - On' : 'Foco Mode',

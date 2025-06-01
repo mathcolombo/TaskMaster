@@ -1,0 +1,77 @@
+import 'package:task_master/models/task.dart';
+import 'package:task_master/models/category.dart';
+import 'package:task_master/models/enums/task_status.dart';
+
+final List<Task> mockTasks = [
+
+  Task(
+    id: 'task_001',
+    title: 'Academia',
+    description: 'Treino de pernas e glúteos.',
+    location: 'SmartFit',
+    time: '15:00h - 16:30h',
+    status: TaskStatus.completed,
+    type: Category.getCategoryById('exercise')!,
+    date: DateTime(2025, 5, 30, 15, 0),
+  ),
+  Task(
+    id: 'task_002',
+    title: 'Reunião de Equipe',
+    description: 'Apresentação de resultados mensais.',
+    location: 'Sala de Reuniões 3',
+    time: '10:00h - 11:00h',
+    status: TaskStatus.missed,
+    type: Category.getCategoryById('work')!,
+    date: DateTime(2025, 5, 29, 10, 0),
+  ),
+  Task(
+    id: 'task_003',
+    title: 'Estudar Flutter',
+    description: 'Revisar conceitos de State Management.',
+    location: 'Casa',
+    time: '20:00h - 22:00h',
+    status: TaskStatus.pending,
+    type: Category.getCategoryById('study')!,
+    date: DateTime(2025, 6, 1, 20, 0),
+  ),
+  Task(
+    id: 'task_004',
+    title: 'Comprar Mantimentos',
+    description: 'Leite, pão, ovos e frutas.',
+    location: 'Supermercado X',
+    time: '17:00h - 18:00h',
+    status: TaskStatus.completed,
+    type: Category.getCategoryById('home')!,
+    date: DateTime(2025, 5, 31, 17, 0),
+  ),
+  Task(
+    id: 'task_005',
+    title: 'Visita ao Dentista',
+    description: 'Revisão semestral.',
+    location: 'Clínica Sorriso Feliz',
+    time: '09:00h - 09:30h',
+    status: TaskStatus.pending,
+    type: Category.getCategoryById('exercise')!,
+    date: DateTime(2025, 6, 2, 9, 0),
+  ),
+   Task(
+    id: 'task_006',
+    title: 'Pagar Contas',
+    description: 'Água, luz e internet.',
+    location: 'Online',
+    time: '14:00h - 14:30h',
+    status: TaskStatus.missed,
+    type: Category.getCategoryById('work')!,
+    date: DateTime(2025, 5, 31, 14, 0),
+  ),
+   Task(
+    id: 'task_007',
+    title: 'Jantar com Amigos',
+    description: 'Restaurante italiano.',
+    location: 'La Trattoria',
+    time: '20:00h - 22:00h',
+    status: TaskStatus.pending,
+    type: Category.getCategoryById('girlfriend')!,
+    date: DateTime(2025, 5, 31, 20, 0),
+  ),
+];

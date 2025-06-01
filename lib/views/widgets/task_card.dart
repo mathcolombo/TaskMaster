@@ -1,111 +1,156 @@
 import 'package:flutter/material.dart';
 import 'package:task_master/models/task.dart';
 import 'package:task_master/models/category.dart';
-import 'package:task_master/models/enums/task_status.dart'; // NOVO IMPORT
+import 'package:task_master/models/enums/task_status.dart';
 
 class TaskCard extends StatelessWidget {
+  
   final Task task;
+  final Function(Task) onToggleStatus;
 
   const TaskCard({
     super.key,
     required this.task,
+    required this.onToggleStatus,
   });
 
-  Color _getCardColor(TaskStatus status) {
-    switch (status) {
-      case TaskStatus.completed:
-        return const Color(0xFF5EAC24); // Verde para cumpridas
-      case TaskStatus.missed:
-        return const Color(0xFF931621); // Vermelho para não cumpridas
-      case TaskStatus.pending:
-      default:
-        return const Color(0xFFB2B09B); // Cinza claro para pendentes (não aconteceram)
+  TimeOfDay _parseTimeOfDay(String timeString) {
+    final String cleanedString = timeString.replaceAll('h', '');
+    final List<String> parts = cleanedString.split(':');
+    if (parts.length != 2) {
+      debugPrint('Erro: Formato de hora inválido para _parseTimeOfDay: $timeString');
+      return TimeOfDay.now();
+    }
+    final int hour = int.parse(parts[0]);
+    final int minute = int.parse(parts[1]);
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  Color _getCardColor(Task task) {
+    final DateTime now = DateTime.now();
+    final DateTime taskDateOnly = DateTime(task.date.year, task.date.month, task.date.day);
+
+    final List<String> timeRangeParts = task.time.split(' - ');
+    final String startTimeString = timeRangeParts[0];
+
+    final TimeOfDay startTime = _parseTimeOfDay(startTimeString);
+
+    final DateTime fullTaskStartDateTime = DateTime(
+      taskDateOnly.year,
+      taskDateOnly.month,
+      taskDateOnly.day,
+      startTime.hour,
+      startTime.minute,
+    );
+
+    if (task.status == TaskStatus.completed) {
+      return const Color(0xFF5EAC24); // Verde para cumpridas
+    } else if (task.status == TaskStatus.missed) {
+      return const Color(0xFF931621); // Vermelho se explicitamente marcada como missed
+    } else { // task.status == TaskStatus.pending
+      if (fullTaskStartDateTime.isBefore(now)) {
+        return const Color(0xFF931621); // Vermelho para pendentes atrasadas
+      } else {
+        return const Color(0xFFB2B09B); // Cinza claro para pendentes futuras
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final Category taskCategory = task.type;
-    final Color cardColor = _getCardColor(task.status); // Usa a função para definir a cor
+    final Color cardColor = _getCardColor(task);
 
     return Card(
-      color: cardColor, // Usa a cor baseada no status
+      color: cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
       elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8.0), // Adicione um margin para espaçamento entre os cards
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: InkWell(
+        onTap: () => onToggleStatus(task),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      task.title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    if (task.description.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          task.description,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(Icons.location_on, size: 16, color: Colors.white70),
+                        const SizedBox(width: 4),
+                        Text(
+                          task.location,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.access_time, size: 16, color: Colors.white70),
+                        const SizedBox(width: 4),
+                        Text(
+                          task.time,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Column(
                 children: [
-                  Text(
-                    task.title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: taskCategory.color.withOpacity(0.3),
+                      shape: BoxShape.circle,
                     ),
+                    child: Icon(taskCategory.icon, color: taskCategory.color, size: 30),
                   ),
-                  if (task.description.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        task.description,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on, size: 16, color: Colors.white70),
-                      const SizedBox(width: 4),
-                      Text(
-                        task.location,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.access_time, size: 16, color: Colors.white70),
-                      const SizedBox(width: 4),
-                      Text(
-                        task.time,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
+                  if (task.status == TaskStatus.completed)
+                    const Icon(Icons.check_circle, color: Colors.white, size: 24)
+                  else if (task.status == TaskStatus.pending && !_getCardColor(task).value.toRadixString(16).contains('931621'))
+                     const Icon(Icons.radio_button_unchecked, color: Colors.white, size: 24)
+                  else if (task.status == TaskStatus.missed || _getCardColor(task).value.toRadixString(16).contains('931621'))
+                    const Icon(Icons.cancel, color: Colors.white, size: 24)
                 ],
               ),
-            ),
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                // Ícone com a cor da categoria (suave)
-                color: taskCategory.color.withOpacity(0.3),
-                shape: BoxShape.circle,
-              ),
-              // Ícone com a cor da categoria
-              child: Icon(taskCategory.icon, color: taskCategory.color, size: 30),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

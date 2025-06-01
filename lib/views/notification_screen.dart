@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:task_master/models/notification_item.dart';
 import 'package:task_master/views/widgets/notification_card.dart';
 import 'package:task_master/views/widgets/bottom_navigation_bar_custom.dart';
-// REMOVIDOS: Imports de TaskScheduleScreen, CalendarScreen, CreateTaskScreen
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -12,9 +11,10 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  
   List<NotificationItem> _notifications = [];
   bool _showUnreadNotifications = true;
-  final int _selectedIndex = 3; // Índice da tela de Notificações na barra inferior
+  final int _selectedIndex = 3;
 
   @override
   void initState() {
@@ -32,18 +32,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
         NotificationItem(
           title: 'Tarefa em 15 minutos',
           message: 'A tarefa "Academia" começa em 15 minutos.\nSe prepare, termine o que está fazendo e toque.',
+          isRead: true,
         ),
         NotificationItem(
-          title: 'Tarefa em 15 minutos',
-          message: 'A tarefa "Academia" começa em 15 minutos.\nSe prepare, termine o que está fazendo e toque.',
+          title: 'Lembrete de Reunião',
+          message: 'Reunião com a equipe de marketing às 10h na sala 3.',
         ),
         NotificationItem(
-          title: 'Tarefa em 15 minutos',
-          message: 'A tarefa "Academia" começa em 15 minutos.\nSe prepare, termine o que está fazendo e toque.',
+          title: 'Prazo de Entrega',
+          message: 'O projeto "App TaskMaster" deve ser finalizado hoje.',
+          isRead: true,
         ),
         NotificationItem(
-          title: 'Tarefa em 15 minutos',
-          message: 'A tarefa "Academia" começa em 15 minutos.\nSe prepare, termine o que está fazendo e toque.',
+          title: 'Nova Atribuição',
+          message: 'Você foi atribuído à tarefa "Revisar Documentação".',
         ),
       ];
     });
@@ -63,55 +65,54 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
   }
 
-  // REMOVIDO: _handleBottomNavTap e _navigateToAddCreateTaskScreen
-  // A lógica de navegação agora está em BottomNavigationBarCustom
-
   @override
   Widget build(BuildContext context) {
+    final List<NotificationItem> displayedNotifications = _showUnreadNotifications
+        ? _notifications.where((n) => !n.isRead).toList()
+        : _notifications.where((n) => n.isRead).toList();
+
     return Scaffold(
-      backgroundColor: const Color(0xFF2E2E3E),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white, size: 30),
+          icon: const Icon(Icons.close, color: Colors.black87, size: 30),
           onPressed: () {
-            // Volta para a tela de tarefas como fallback.
             BottomNavigationBarCustom.navigate(0, context);
           },
         ),
         title: Text(
-          _showUnreadNotifications ? 'Notificações' : 'Notificações-lidas',
-          style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+          _showUnreadNotifications ? 'Notificações' : 'Notificações Lidas',
+          style: const TextStyle(color: Colors.black87, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
       body: Column(
         children: [
           Expanded(
-            child: _showUnreadNotifications
-                ? (_notifications.where((n) => !n.isRead).isEmpty
-                    ? _buildNoNotificationsContent()
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(16.0),
-                        itemCount: _notifications.where((n) => !n.isRead).length,
-                        itemBuilder: (context, index) {
-                          final unreadNotifications = _notifications.where((n) => !n.isRead).toList();
-                          final notification = unreadNotifications[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: NotificationCard(
-                              notification: notification,
-                              onTap: () {
-                                setState(() {
-                                  notification.isRead = true;
-                                });
-                              },
-                            ),
-                          );
-                        },
-                      ))
-                : _buildNoNotificationsContent(),
+            child: displayedNotifications.isEmpty
+                ? _buildNoNotificationsContent()
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: displayedNotifications.length,
+                    itemBuilder: (context, index) {
+                      final notification = displayedNotifications[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: NotificationCard(
+                          notification: notification,
+                          onTap: () {
+                            if (_showUnreadNotifications) {
+                              setState(() {
+                                notification.isRead = true;
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 20.0, left: 16.0, right: 16.0),
@@ -121,13 +122,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
               child: ElevatedButton(
                 onPressed: _markAllAsRead,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6B8A9E),
+                  backgroundColor: const Color(0xff19647E),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
                 child: Text(
-                  _showUnreadNotifications ? 'Marcar tudo como lido' : 'Marcar tudo como não lido',
+                  _showUnreadNotifications ? 'Marcar tudo como lido' : 'Mostrar não lidas',
                   style: const TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
@@ -144,16 +145,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.notifications_off_outlined,
-            color: Colors.grey,
+            color: Colors.grey.shade400,
             size: 100,
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Nenhuma notificação encontrada',
-            style: TextStyle(
-              color: Colors.white70,
+          Text(
+            'Nenhuma notificação ${_showUnreadNotifications ? 'não lida' : 'lida'} encontrada',
+            style: const TextStyle(
+              color: Colors.black54,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),

@@ -6,6 +6,7 @@ import 'package:task_master/views/create_task_screen.dart';
 import 'package:task_master/views/focus_mode_screen.dart';
 
 class BottomNavigationBarCustom extends StatelessWidget {
+  
   final void Function(int index, BuildContext context) onItemTap;
   final int selectedIndex;
 
@@ -17,15 +18,12 @@ class BottomNavigationBarCustom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calculamos a largura desejada, por exemplo, 85% da largura da tela
+
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double desiredWidth = screenWidth * 0.85; // Ajuste este valor (0.80 a 0.90)
+    final double desiredWidth = screenWidth * 0.85;
 
     return Container(
-      // Adiciona margens laterais para que o Container não ocupe 100% da largura
       margin: EdgeInsets.symmetric(horizontal: (screenWidth - desiredWidth) / 2),
-      // A altura será determinada pelo conteúdo interno, mas você pode fixar se quiser
-      // height: 70, // Exemplo: altura fixa, se necessário
 
       decoration: BoxDecoration(
         color: Colors.white,
@@ -39,9 +37,8 @@ class BottomNavigationBarCustom extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Padding interno para a Row
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
-        // mainAxisSize: MainAxisSize.min, // Não precisa mais, pois o Container já limita a largura
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(context, 0, Icons.calendar_today, 'Tarefa'),
@@ -68,7 +65,7 @@ class BottomNavigationBarCustom extends StatelessWidget {
       width: 50,
       height: 50,
       decoration: const BoxDecoration(
-        color: Colors.green,
+        color: Color(0xff19647E),
         shape: BoxShape.circle,
       ),
       child: IconButton(

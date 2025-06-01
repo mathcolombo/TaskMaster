@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_master/models/category.dart';
 
 class CategoryChip extends StatelessWidget {
+  
   final Category category;
   final bool isSelected;
   final VoidCallback onTap;
@@ -20,17 +21,15 @@ class CategoryChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
-          // CORRIGIDO: Usar category.color diretamente, sem o '??'
           color: isSelected
-              ? category.color // A cor da categoria para o fundo do chip selecionado
-              : Colors.white.withOpacity(0.1), // Cor padrão se não selecionado
+              ? category.color
+              : Colors.grey.withOpacity(0.2),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // CORRIGIDO: Usar category.icon diretamente, sem o 'if (category.icon != null)'
-            Icon(category.icon, color: Colors.white, size: 18), // A cor do ícone é sempre branca aqui
+            Icon(category.icon, color: Colors.white, size: 18),
             const SizedBox(width: 8),
             Text(
               category.name,

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:task_master/models/notification_item.dart';
 
 class NotificationCard extends StatelessWidget {
+  
   final NotificationItem notification;
-  final VoidCallback? onTap; // Opcional, para marcar como lida ao tocar
+  final VoidCallback? onTap;
 
   const NotificationCard({
     super.key,
@@ -13,41 +14,53 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // A cor de fundo será um cinza claro ou branco para notificações não lidas.
-    // Usamos Colors.white.withOpacity(0.1) para simular o card claro no fundo escuro.
     final Color backgroundColor = notification.isRead
-        ? Colors.grey.withOpacity(0.2) // Mais transparente/escuro se lida
-        : Colors.white.withOpacity(0.1); // Cor para não lida
+        ? Colors.grey.withOpacity(0.1)
+        : Colors.white;
+
+    final Color titleColor = notification.isRead
+        ? Colors.black54
+        : Colors.black87;
+
+    final Color messageColor = notification.isRead
+        ? Colors.black45
+        : Colors.black54;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: backgroundColor, //
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(15.0),
-          // Borda sutil para separar os cards
           border: Border.all(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.grey.withOpacity(0.2),
             width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              notification.title, //
-              style: const TextStyle(
-                color: Colors.white,
+              notification.title,
+              style: TextStyle(
+                color: titleColor,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              notification.message, //
+              notification.message,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: messageColor,
                 fontSize: 14,
               ),
               maxLines: 2,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:task_master/views/task_schedule_screen.dart'; // Aponta para a tela de tarefas
+import 'package:task_master/views/task_schedule_screen.dart';
 
-void main() async { // Garanta que 'async' está aqui
-  WidgetsFlutterBinding.ensureInitialized(); // Garanta que esta linha está aqui
-  await initializeDateFormatting('pt_BR', null); // Garanta que 'await' está aqui
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('pt_BR', null);
   runApp(const MyApp());
 }
 
