@@ -4,14 +4,15 @@ import 'package:task_master/models/category.dart';
 import 'package:task_master/models/enums/task_status.dart';
 
 class TaskCard extends StatelessWidget {
-  
   final Task task;
   final Function(Task) onToggleStatus;
+  final Function(Task)? onRemove;
 
   const TaskCard({
     super.key,
     required this.task,
     required this.onToggleStatus,
+    this.onRemove,
   });
 
   TimeOfDay _parseTimeOfDay(String timeString) {
@@ -70,6 +71,34 @@ class TaskCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
         onTap: () => onToggleStatus(task),
+        onLongPress: () {
+          if (onRemove != null) {
+            showDialog(
+              context: context,
+              builder: (BuildContext dialogContext) {
+                return AlertDialog(
+                  title: const Text('Remover Tarefa'),
+                  content: Text('Tem certeza que deseja remover a tarefa "${task.title}"?'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('Cancelar'),
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('Remover', style: TextStyle(color: Colors.red)),
+                      onPressed: () {
+                        onRemove!(task);
+                        Navigator.of(dialogContext).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -144,9 +173,9 @@ class TaskCard extends StatelessWidget {
                   if (task.status == TaskStatus.completed)
                     const Icon(Icons.check_circle, color: Colors.white, size: 24)
                   else if (task.status == TaskStatus.pending && !_getCardColor(task).value.toRadixString(16).contains('931621'))
-                     const Icon(Icons.radio_button_unchecked, color: Colors.white, size: 24)
+                      const Icon(Icons.radio_button_unchecked, color: Colors.white, size: 24)
                   else if (task.status == TaskStatus.missed || _getCardColor(task).value.toRadixString(16).contains('931621'))
-                    const Icon(Icons.cancel, color: Colors.white, size: 24)
+                      const Icon(Icons.cancel, color: Colors.white, size: 24)
                 ],
               ),
             ],

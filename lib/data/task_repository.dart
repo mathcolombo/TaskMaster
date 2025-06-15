@@ -45,4 +45,7 @@ class TaskRepository {
     _tasks.value = updatedTasks;
   }
 
+  void removeTask(Task task) {
+    _tasks.value = _tasks.value.where((t) => t.id != task.id).toList();
+  }
 }

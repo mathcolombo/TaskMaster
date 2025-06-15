@@ -15,7 +15,6 @@ class TaskScheduleScreen extends StatefulWidget {
 }
 
 class _TaskScheduleScreenState extends State<TaskScheduleScreen> {
-
   int _selectedIndex = 0;
   bool _isCalendarExpanded = false;
   List<DateTime> _weekDates = [];
@@ -77,6 +76,10 @@ class _TaskScheduleScreenState extends State<TaskScheduleScreen> {
     _taskRepository.markTaskAsMissed(task);
   }
 
+  void _removeTask(Task task) {
+    _taskRepository.removeTask(task);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,8 +111,8 @@ class _TaskScheduleScreenState extends State<TaskScheduleScreen> {
         builder: (context, currentTasks, child) {
           final List<Task> tasksForSelectedDay = currentTasks.where((task) {
             return task.date.year == _selectedDay.year &&
-                   task.date.month == _selectedDay.month &&
-                   task.date.day == _selectedDay.day;
+                task.date.month == _selectedDay.month &&
+                task.date.day == _selectedDay.day;
           }).toList();
 
           tasksForSelectedDay.sort((a, b) {
@@ -150,6 +153,7 @@ class _TaskScheduleScreenState extends State<TaskScheduleScreen> {
                           return TaskCard(
                             task: task,
                             onToggleStatus: _toggleTaskStatus,
+                            onRemove: _removeTask,
                           );
                         },
                       ),
@@ -176,8 +180,8 @@ class _TaskScheduleScreenState extends State<TaskScheduleScreen> {
 
   Widget _buildDayCard(DateTime date, List<Task> currentTasks) {
     final bool isSelected = date.year == _selectedDay.year &&
-                            date.month == _selectedDay.month &&
-                            date.day == _selectedDay.day;
+        date.month == _selectedDay.month &&
+        date.day == _selectedDay.day;
 
     final String weekday = DateFormat('EEE', 'pt_BR').format(date);
     final String dayNumber = DateFormat('dd').format(date);

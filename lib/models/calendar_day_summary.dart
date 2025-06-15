@@ -1,20 +1,24 @@
+import 'package:task_master/models/task.dart'; // Make sure to import your Task model
+
 class CalendarDaySummary {
-  
   final int day;
   final String weekday;
-  final List<bool> hasTasks;
+  final List<Task> tasks;
 
   CalendarDaySummary({
     required this.day,
     required this.weekday,
-    this.hasTasks = const [],
+    this.tasks = const [],
   });
 
   factory CalendarDaySummary.fromJson(Map<String, dynamic> json) {
     return CalendarDaySummary(
       day: json['day'] as int,
       weekday: json['weekday'] as String,
-      hasTasks: (json['hasTasks'] as List?)?.map((e) => e as bool).toList() ?? [],
+      tasks: (json['tasks'] as List?)
+              ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
@@ -22,7 +26,7 @@ class CalendarDaySummary {
     return {
       'day': day,
       'weekday': weekday,
-      'hasTasks': hasTasks,
+      'tasks': tasks.map((task) => task.toJson()).toList(),
     };
   }
 }
